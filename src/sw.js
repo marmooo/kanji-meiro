@@ -1,4 +1,4 @@
-var CACHE_NAME = '2021-05-08 23:15';
+var CACHE_NAME = '2021-05-08 23:20';
 var urlsToCache = [
   '/kanji-meiro/',
   '/kanji-meiro/2/',
