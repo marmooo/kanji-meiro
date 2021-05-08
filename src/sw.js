@@ -6,7 +6,7 @@ var urlsToCache = [
   '/kanji-meiro/index.js',
   '/kanji-meiro/2.js',
   '/kanji-meiro/3.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/css/bootstrap.min.css',
+  'https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css',
 ];
 
 self.addEventListener('install', function(event) {
