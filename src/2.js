@@ -65,7 +65,10 @@ let meiro = new Array(12);
 let score = 0;
 let counter = 0;
 let processed;
+let prevPos = 1;
 let idioms = i4;
+let idiomEnds = [];
+let isCorrect = true;
 let ignores = g4;
 let words  = w4;
 let level = 4;
@@ -304,6 +307,7 @@ function startGame() {
   startButton.innerText = 'やり直し';
   var answerButton = document.getElementById('answerButton');
   answerButton.classList.remove('d-none');
+  prevPos = 1;
 }
 
 function isPassableRoute(x, y, routes) {
@@ -440,6 +444,15 @@ function p() {
   console.log(str);
 }
 
+function checkIdiomEnds() {
+  let count = 0;
+  idiomEnds = [];
+  for (let i=0; i<counter; i++) {
+    count += idioms[i].length;
+    idiomEnds.push(count);
+  }
+}
+
 function generateGame() {
   // 開始地点を選び隣接しないように熟語を埋めていく
   idioms = shuffle(idioms);
@@ -489,6 +502,8 @@ function generateGame() {
       }
     }
   }
+  checkIdiomEnds();
+  const idiomStr = idioms.slice(0, counter).join('');
   var meiroNode = document.getElementById('meiro');
   while(meiroNode.firstChild) { meiroNode.removeChild(meiroNode.firstChild); }
   for (var x=0; x<size; x++) {
@@ -496,27 +511,45 @@ function generateGame() {
     meiroNode.appendChild(tr);
     for (var y=0; y<size; y++) {
       var td = document.createElement('td');
-      td.innerText = words[getRandomInt(0, words.length)];
+      const currPos = meiro[x][y];
+      if (currPos == 0) {
+        td.textContent = words[getRandomInt(0, words.length)];
+      } else {
+        if (currPos == 1) {
+          td.classList.add('table-secondary');
+        }
+        td.textContent = idiomStr[currPos - 1];
+      }
       tr.appendChild(td);
       td.onclick = function() {
-        this.classList.toggle('table-primary');
+        meiroClickEvent(this, currPos);
       }
     }
   }
-  var trs = meiroNode.children;
-  var j = 0;  var k = 0;
-  for (var i=1; i<=counter; i++) {
-    var idx = findMeiroIndex(i);
-    var idiom = idioms[j][k];
-    var td = trs[Math.floor(idx / size)].children[idx % size];
-    td.innerText = idiom;
-    if (i == 1) {
-      td.classList.add('table-secondary');
-    }
-    if (k == idioms[j].length - 1) {
-      j += 1;  k = 0;
+}
+
+function meiroClickEvent(obj, currPos) {
+  obj.classList.toggle('table-primary');
+  if (obj.classList.contains('table-primary')) {
+    if (prevPos == currPos) {
+      new Audio('/kanji-meiro/mp3/cat.mp3').play();
+    } else if (currPos - prevPos == 1 && currPos != 0) {  // 正解
+      prevPos += 1;
+      new Audio('/kanji-meiro/mp3/correct3.mp3').play();
+      obj.onclick = function() {};
+      const pos = idiomEnds.findIndex(x => x == currPos);
+      if (pos >= 0) {
+        if (isCorrect) {
+          score += idioms[pos].length;
+          document.getElementById('score').innerText = score;
+        }
+        prependIdiomLink(idioms[pos], isCorrect);
+        isCorrect = true;
+      }
     } else {
-      k += 1;
+      obj.classList.toggle('table-primary');
+      new Audio('/kanji-meiro/mp3/incorrect1.mp3').play();
+      isCorrect = false;
     }
   }
 }
