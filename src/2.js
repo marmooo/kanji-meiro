@@ -64,10 +64,10 @@ let size = 10;
 let meiro = new Array(12);
 let score = 0;
 let counter = 0;
-let processed;
 let prevPos = 1;
 let idioms = i4;
 let idiomEnds = [];
+let idiomsNum;
 let isCorrect = true;
 let ignores = g4;
 let words  = w4;
@@ -92,23 +92,6 @@ function shuffle(array) {
     [array[i], array[rand]] = [array[rand], array[i]]
   }
   return array;
-}
-
-function calcReply() {
-  var reply = new Array(size * size);
-  var trs = document.getElementById('meiro').children;
-  for (var x=0; x<size; x++) {
-    var tds = trs[x].children;
-    for (var y=0; y<size; y++) {
-      var selected = tds[y].classList.contains('table-primary');
-      var hinted = tds[y].classList.contains('table-secondary');
-      var pos = meiro[x][y];
-      if (pos > 0 && (selected || hinted)) {
-        reply[pos-1] = tds[y].innerText;
-      }
-    }
-  }
-  return reply;
 }
 
 function findMeiroIndex(n) {
@@ -136,51 +119,19 @@ function prependIdiomLink(idiom, correct) {
   solvedPanel.prepend(a);
 }
 
-function showSolved(reply, hinted) {
+function showSolved(hinted) {
   var solvedPanel = document.getElementById('solvedPanel');
   var trs = document.getElementById('meiro').children;
-  var j = 0;  var k = 0;
-  for (var i=0; i<counter; i++) {
-    var idiom = idioms[j];
-    if (!processed[i]) {
-      if (reply[i] == idiom[k]) {
-        if (k == idiom.length - 1) {
-          prependIdiomLink(idiom, true);
-          score += idiom.length;
-          document.getElementById('score').innerText = score;
-        }
-        processed[i] = true;
-      } else {
-        prependIdiomLink(idiom, false);
-        var pos = i - k;
-        for (var l = pos; l < pos + idiom.length; l++) {
-          processed[l] = true;
-          var idx = findMeiroIndex(l+1);
-          var td = trs[Math.floor(idx / size)].children[idx % size];
-          td.className = '';
-          td.classList.add('table-secondary');
-        }
-        if (hinted) {
-          break;
-        }
-      }
-    }
-    if (k == idiom.length - 1) {
-      j += 1;  k = 0;
-    } else {
-      k += 1;
-    }
+  var currPos = idiomEnds.findIndex(x => x > prevPos);
+  if (currPos >= 0) {
+    idioms.slice(currPos, idiomsNum).forEach(idiom => {
+      prependIdiomLink(idiom, false);
+    });
   }
 }
 
-function showHint(reply) {
-  var reply = calcReply();
-  showSolved(reply, true);
-}
-
 function showAnswer() {
-  var reply = calcReply();
-  showSolved(reply, false);
+  showSolved(false);
   var trs = document.getElementById('meiro').children;
   for (var x=0; x<size; x++) {
     var tds = trs[x].children;
@@ -491,7 +442,6 @@ function generateGame() {
               painting = false;
               if (counter > 20) {  // 良い迷路になっている
                 generating = false;
-                processed = new Array(counter);  // 回答リストのキャッシュを生成
               }
             }
             i += 1;
@@ -501,9 +451,10 @@ function generateGame() {
         if (noRoute) { painting = false; }
       }
     }
+    idiomsNum = i;
   }
   checkIdiomEnds();
-  const idiomStr = idioms.slice(0, counter).join('');
+  const idiomStr = idioms.slice(0, idiomsNum).join('');
   var meiroNode = document.getElementById('meiro');
   while(meiroNode.firstChild) { meiroNode.removeChild(meiroNode.firstChild); }
   for (var x=0; x<size; x++) {
