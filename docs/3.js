@@ -61,8 +61,8 @@ checkIdiomEnds();const idiomStr=idioms.slice(0,idiomsNum).join('');var meiroNode
 for(var x=0;x<size;x++){var tr=document.createElement('tr');meiroNode.appendChild(tr);for(var y=0;y<size;y++){var td=document.createElement('td');const currPos=meiro[x][y];if(currPos==0){td.textContent=words[getRandomInt(0,words.length)];}else{if(currPos==1){td.classList.add('table-secondary');}
 td.textContent=idiomStr[currPos-1];}
 tr.appendChild(td);td.onclick=function(){meiroClickEvent(this,currPos);}}}}
-function meiroClickEvent(obj,currPos){obj.classList.toggle('table-primary');if(obj.classList.contains('table-primary')){if(prevPos==currPos){errorAudio.play();}else if(currPos-prevPos==1&&currPos!=0){prevPos+=1;correctAudio.play();obj.onclick=function(){};const pos=idiomEnds.findIndex(x=>x==currPos);if(pos>=0){if(isCorrect){score+=idioms[pos].length;document.getElementById('score').innerText=score;}
-prependIdiomLink(idioms[pos],isCorrect);isCorrect=true;}}else{obj.classList.toggle('table-primary');incorrectAudio.play();isCorrect=false;}}}
+function meiroClickEvent(obj,currPos){obj.classList.toggle('table-primary');if(obj.classList.contains('table-primary')){if(prevPos==currPos){errorAudio.cloneNode().play();}else if(currPos-prevPos==1&&currPos!=0){prevPos+=1;correctAudio.cloneNode().play();obj.onclick=function(){};const pos=idiomEnds.findIndex(x=>x==currPos);if(pos>=0){if(isCorrect){score+=idioms[pos].length;document.getElementById('score').innerText=score;}
+prependIdiomLink(idioms[pos],isCorrect);isCorrect=true;}}else{obj.classList.toggle('table-primary');incorrectAudio.cloneNode().play();isCorrect=false;}}}
 function resizeFontSize(node){function getTextWidth(text,font){var context=tmpCanvas.getContext("2d");context.font=font;var metrics=context.measureText(text);return metrics.width;}
 function getTextRect(text,fontSize,font,lineHeight){var lines=text.split('\n');var maxWidth=0;var fontConfig=fontSize+'px '+font;for(var i=0;i<lines.length;i++){var width=getTextWidth(lines[i],fontConfig);if(maxWidth<width){maxWidth=width;}}
 return[maxWidth,fontSize*lines.length*lineHeight];}

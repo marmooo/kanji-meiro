@@ -487,10 +487,10 @@ function meiroClickEvent(obj, currPos) {
   obj.classList.toggle('table-primary');
   if (obj.classList.contains('table-primary')) {
     if (prevPos == currPos) {
-      errorAudio.play();
+      errorAudio.cloneNode().play();
     } else if (currPos - prevPos == 1 && currPos != 0) {  // 正解
       prevPos += 1;
-      correctAudio.play();
+      correctAudio.cloneNode().play();
       obj.onclick = function() {};
       const pos = idiomEnds.findIndex(x => x == currPos);
       if (pos >= 0) {
@@ -503,7 +503,7 @@ function meiroClickEvent(obj, currPos) {
       }
     } else {
       obj.classList.toggle('table-primary');
-      incorrectAudio.play();
+      incorrectAudio.cloneNode().play();
       isCorrect = false;
     }
   }
