@@ -72,6 +72,10 @@ let isCorrect = true;
 let ignores = g4;
 let words  = w4;
 let level = 4;
+const errorAudio = new Audio('/kanji-meiro/mp3/cat.mp3');
+const correctAudio = new Audio('/kanji-meiro/mp3/correct3.mp3');
+const incorrectAudio = new Audio('/kanji-meiro/mp3/incorrect1.mp3');
+
 
 function loadConfig() {
   if (localStorage.getItem('darkMode') == 1) {
@@ -483,10 +487,10 @@ function meiroClickEvent(obj, currPos) {
   obj.classList.toggle('table-primary');
   if (obj.classList.contains('table-primary')) {
     if (prevPos == currPos) {
-      new Audio('/kanji-meiro/mp3/cat.mp3').play();
+      errorAudio.play();
     } else if (currPos - prevPos == 1 && currPos != 0) {  // 正解
       prevPos += 1;
-      new Audio('/kanji-meiro/mp3/correct3.mp3').play();
+      correctAudio.play();
       obj.onclick = function() {};
       const pos = idiomEnds.findIndex(x => x == currPos);
       if (pos >= 0) {
@@ -499,7 +503,7 @@ function meiroClickEvent(obj, currPos) {
       }
     } else {
       obj.classList.toggle('table-primary');
-      new Audio('/kanji-meiro/mp3/incorrect1.mp3').play();
+      incorrectAudio.play();
       isCorrect = false;
     }
   }
