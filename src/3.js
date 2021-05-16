@@ -72,9 +72,7 @@ let isCorrect = true;
 let ignores = g4;
 let words  = w4;
 let level = 4;
-const errorAudio = new Audio('/kanji-meiro/mp3/cat.mp3');
-const correctAudio = new Audio('/kanji-meiro/mp3/correct3.mp3');
-const incorrectAudio = new Audio('/kanji-meiro/mp3/incorrect1.mp3');
+let errorAudio, correctAudio, incorrectAudio;
 
 
 function loadConfig() {
@@ -83,6 +81,36 @@ function loadConfig() {
   }
 }
 loadConfig();
+
+function unlockAudios() {
+  promises = [
+    loadAudio('/kanji-meiro/mp3/cat.mp3'),
+    loadAudio('/kanji-meiro/mp3/correct3.mp3'),
+    loadAudio('/kanji-meiro/mp3/incorrect1.mp3'),
+  ];
+  Promise.all(promises).then(buffers => {
+    errorAudio = buffers[0];
+    correctAudio = buffers[1];
+    incorrectAudio = buffers[2];
+  });
+}
+
+function playAudio(buffer) {
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  const ctx = new AudioContext();
+  const audioSource = ctx.createBufferSource();
+  audioSource.buffer = buffer;
+  audioSource.connect(ctx.destination);
+  audioSource.start();
+}
+
+function loadAudio(url) {
+  return fetch(url).then(response => response.arrayBuffer()).then(arrayBuffer => {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    const ctx = new AudioContext();
+    return ctx.decodeAudioData(arrayBuffer);
+  });
+}
 
 function getRandomInt(min, max) {
   min = Math.ceil(min);
@@ -487,10 +515,10 @@ function meiroClickEvent(obj, currPos) {
   obj.classList.toggle('table-primary');
   if (obj.classList.contains('table-primary')) {
     if (prevPos == currPos) {
-      errorAudio.cloneNode().play();
+      playAudio(errorAudio);
     } else if (currPos - prevPos == 1 && currPos != 0) {  // 正解
       prevPos += 1;
-      correctAudio.cloneNode().play();
+      playAudio(correctAudio);
       obj.onclick = function() {};
       const pos = idiomEnds.findIndex(x => x == currPos);
       if (pos >= 0) {
@@ -503,7 +531,7 @@ function meiroClickEvent(obj, currPos) {
       }
     } else {
       obj.classList.toggle('table-primary');
-      incorrectAudio.cloneNode().play();
+      playAudio(incorrectAudio);
       isCorrect = false;
     }
   }
@@ -590,4 +618,5 @@ document.getElementById('levelOption').addEventListener('change', function() {
 document.getElementById('courseOption').addEventListener('change', function() {
   location.href = this.options[this.selectedIndex].value;
 });
+document.addEventListener('click', unlockAudios, { once:true });
 
