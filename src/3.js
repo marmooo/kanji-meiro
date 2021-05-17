@@ -73,6 +73,10 @@ let ignores = g4;
 let words  = w4;
 let level = 4;
 let errorAudio, correctAudio, incorrectAudio;
+loadAudios();
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+const audioContext = new AudioContext();
+
 
 
 function loadConfig() {
@@ -82,33 +86,41 @@ function loadConfig() {
 }
 loadConfig();
 
-function unlockAudios() {
+function playAudio(audioBuffer, unlock) {
+  const audioSource = audioContext.createBufferSource();
+  audioSource.buffer = audioBuffer;
+  audioSource.connect(audioContext.destination);
+  audioSource.start();
+}
+
+function unlockAudio() {
+  audioContext.resume();
+}
+
+function loadAudio(url) {
+  return fetch(url)
+    .then(response => response.arrayBuffer())
+    .then(arrayBuffer => {
+      return new Promise((resolve, reject) => {
+        audioContext.decodeAudioData(arrayBuffer, (audioBuffer) => {
+          resolve(audioBuffer);
+        }, (err) => {
+          reject(err);
+        });
+      });
+    });
+}
+
+function loadAudios() {
   promises = [
     loadAudio('/kanji-meiro/mp3/cat.mp3'),
     loadAudio('/kanji-meiro/mp3/correct3.mp3'),
     loadAudio('/kanji-meiro/mp3/incorrect1.mp3'),
   ];
-  Promise.all(promises).then(buffers => {
-    errorAudio = buffers[0];
-    correctAudio = buffers[1];
-    incorrectAudio = buffers[2];
-  });
-}
-
-function playAudio(buffer) {
-  const AudioContext = window.AudioContext || window.webkitAudioContext;
-  const ctx = new AudioContext();
-  const audioSource = ctx.createBufferSource();
-  audioSource.buffer = buffer;
-  audioSource.connect(ctx.destination);
-  audioSource.start();
-}
-
-function loadAudio(url) {
-  return fetch(url).then(response => response.arrayBuffer()).then(arrayBuffer => {
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
-    const ctx = new AudioContext();
-    return ctx.decodeAudioData(arrayBuffer);
+  Promise.all(promises).then(audioBuffers => {
+    errorAudio = audioBuffers[0];
+    correctAudio = audioBuffers[1];
+    incorrectAudio = audioBuffers[2];
   });
 }
 
@@ -618,5 +630,5 @@ document.getElementById('levelOption').addEventListener('change', function() {
 document.getElementById('courseOption').addEventListener('change', function() {
   location.href = this.options[this.selectedIndex].value;
 });
-document.addEventListener('click', unlockAudios, { once:true });
+document.addEventListener('click', unlockAudio, { once:true, useCapture:true });
 
