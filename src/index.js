@@ -86,11 +86,19 @@ function loadConfig() {
 }
 loadConfig();
 
-function playAudio(audioBuffer, unlock) {
+function playAudio(audioBuffer, volume) {
   const audioSource = audioContext.createBufferSource();
   audioSource.buffer = audioBuffer;
-  audioSource.connect(audioContext.destination);
-  audioSource.start();
+  if (volume) {
+    const gainNode = audioContext.createGain();
+    gainNode.gain.value = volume;
+    gainNode.connect(audioContext.destination);
+    audioSource.connect(gainNode);
+    audioSource.start();
+  } else {
+    audioSource.connect(audioContext.destination);
+    audioSource.start();
+  }
 }
 
 function unlockAudio() {
