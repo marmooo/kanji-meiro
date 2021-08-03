@@ -677,6 +677,8 @@ while (solvedPanel.firstChild) solvedPanel.removeChild(solvedPanel.firstChild);
 showAnswer();
 
 document.getElementById("toggleDarkMode").onclick = toggleDarkMode;
+document.getElementById("startButton").onclick = startGame;
+document.getElementById("answerButton").onclick = showAnswer;
 document.getElementById("levelOption").addEventListener("change", function () {
   idioms = idiomsList[this.selectedIndex];
   words = wordsList[this.selectedIndex];
