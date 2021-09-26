@@ -2,16 +2,14 @@
 
 [迷路で楽しく勉強できる漢字ゲーム](https://marmooo.github.io/kanji-meiro/)です。
 
-## Dataset
+## Installation
 
-- kanji-2-10000 in
-  [marmooo/ngram-idioms](https://github.com/marmooo/ngram-idioms)
-- kanji-3-5000 in
-  [marmooo/ngram-idioms](https://github.com/marmooo/ngram-idioms)
+install [marmooo/ngram-idioms](https://github.com/marmooo/ngram-idioms)
 
 ## Build
 
 ```
+deno run --allow-read --allow-write build.js
 bash build.sh
 ```
 

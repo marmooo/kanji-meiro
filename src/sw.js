@@ -1,11 +1,7 @@
-var CACHE_NAME = '2021-09-12 08:36';
+var CACHE_NAME = '2021-09-27 00:35';
 var urlsToCache = [
   "/kanji-meiro/",
-  "/kanji-meiro/2/",
-  "/kanji-meiro/3/",
   "/kanji-meiro/index.js",
-  "/kanji-meiro/2.js",
-  "/kanji-meiro/3.js",
   "/kanji-meiro/mp3/incorrect1.mp3",
   "/kanji-meiro/mp3/cat.mp3",
   "/kanji-meiro/mp3/correct3.mp3",
