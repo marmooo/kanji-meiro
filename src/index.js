@@ -125,7 +125,7 @@ function shuffle(array) {
 
 function prependIdiomLink(idiom, correct) {
   const a = document.createElement("a");
-  a.innerText = idiom;
+  a.textContent = idiom;
   a.href = "https://www.google.com/search?q=" + idiom + "とは";
   a.target = "_blank";
   a.rel = "noopener noreferer";
@@ -160,28 +160,28 @@ function showAnswer() {
   }
   const startButton = document.getElementById("startButton");
   startButton.classList.remove("d-none");
-  startButton.innerText = "スタート";
+  startButton.textContent = "スタート";
   const answerButton = document.getElementById("answerButton");
   answerButton.classList.add("d-none");
 }
 
 function getNeighborText(trs, x, y, direction) {
-  let text = trs[x].children[y].innerText;
+  let text = trs[x].children[y].textContent;
   if (direction == 1) {
     if (meiro[x - 1][y] != 0) {
-      text += trs[x - 1].children[y].innerText;
+      text += trs[x - 1].children[y].textContent;
     }
   } else if (direction == 2) {
     if (meiro[x + 1][y] != 0) {
-      text += trs[x + 1].children[y].innerText;
+      text += trs[x + 1].children[y].textContent;
     }
   } else if (direction == 3) {
     if (meiro[x][y - 1] != 0) {
-      text += trs[x].children[y - 1].innerText;
+      text += trs[x].children[y - 1].textContent;
     }
   } else {
     if (meiro[x][y + 1] != 0) {
-      text += trs[x].children[y + 1].innerText;
+      text += trs[x].children[y + 1].textContent;
     }
   }
   return text;
@@ -189,16 +189,16 @@ function getNeighborText(trs, x, y, direction) {
 
 function setNeighborText(trs, x, y, direction, text, isAnswer) {
   if (!isAnswer) {
-    trs[x].children[y].innerText = text[0];
+    trs[x].children[y].textContent = text[0];
   }
   if (direction == 1) {
-    trs[x - 1].children[y].innerText = text[1];
+    trs[x - 1].children[y].textContent = text[1];
   } else if (direction == 2) {
-    trs[x + 1].children[y].innerText = text[1];
+    trs[x + 1].children[y].textContent = text[1];
   } else if (direction == 3) {
-    trs[x].children[y - 1].innerText = text[1];
+    trs[x].children[y - 1].textContent = text[1];
   } else {
-    trs[x].children[y + 1].innerText = text[1];
+    trs[x].children[y + 1].textContent = text[1];
   }
 }
 
@@ -273,7 +273,7 @@ function startGame() {
   strictSolution();
   const startButton = document.getElementById("startButton");
   startButton.classList.add("d-none");
-  startButton.innerText = "やり直し";
+  startButton.textContent = "やり直し";
   const answerButton = document.getElementById("answerButton");
   answerButton.classList.remove("d-none");
   prevPos = 1;
@@ -515,7 +515,7 @@ function meiroClickEvent(obj, currPos) {
       if (pos >= 0) {
         if (isCorrect) {
           score += idioms[pos].length;
-          document.getElementById("score").innerText = score;
+          document.getElementById("score").textContent = score;
         }
         prependIdiomLink(idioms[pos], isCorrect);
         isCorrect = true;
