@@ -6,15 +6,15 @@ function loadAudios(){promises=[loadAudio("/kanji-meiro/mp3/cat.mp3"),loadAudio(
 function getRandomInt(min,max){min=Math.ceil(min);max=Math.floor(max);return Math.floor(Math.random()*(max-min))+min;}
 function shuffle(array){for(let i=array.length-1;i>=0;i--){const rand=Math.floor(Math.random()*(i+1));[array[i],array[rand]]=[array[rand],array[i]];}
 return array;}
-function prependIdiomLink(idiom,correct){const a=document.createElement("a");a.innerText=idiom;a.href="https://www.google.com/search?q="+idiom+"とは";a.target="_blank";a.rel="noopener noreferer";if(correct){a.className="btn btn-light m-1";}else{a.className="btn btn-secondary m-1";}
+function prependIdiomLink(idiom,correct){const a=document.createElement("a");a.textContent=idiom;a.href="https://www.google.com/search?q="+idiom+"とは";a.target="_blank";a.rel="noopener noreferer";if(correct){a.className="btn btn-light m-1";}else{a.className="btn btn-secondary m-1";}
 solvedPanel.prepend(a);}
 function showSolved(){const currPos=idiomEnds.findIndex((x)=>x>prevPos);if(currPos>=0){idioms.slice(currPos,idiomsNum).forEach((idiom)=>{prependIdiomLink(idiom,false);});}}
 function showAnswer(){showSolved(false);const trs=document.getElementById("meiro").children;for(let x=0;x<size;x++){const tds=trs[x].children;for(let y=0;y<size;y++){if(meiro[x][y]>0){tds[y].className="";tds[y].classList.add("table-danger");}}}
-const startButton=document.getElementById("startButton");startButton.classList.remove("d-none");startButton.innerText="スタート";const answerButton=document.getElementById("answerButton");answerButton.classList.add("d-none");}
-function getNeighborText(trs,x,y,direction){let text=trs[x].children[y].innerText;if(direction==1){if(meiro[x-1][y]!=0){text+=trs[x-1].children[y].innerText;}}else if(direction==2){if(meiro[x+1][y]!=0){text+=trs[x+1].children[y].innerText;}}else if(direction==3){if(meiro[x][y-1]!=0){text+=trs[x].children[y-1].innerText;}}else{if(meiro[x][y+1]!=0){text+=trs[x].children[y+1].innerText;}}
+const startButton=document.getElementById("startButton");startButton.classList.remove("d-none");const answerButton=document.getElementById("answerButton");answerButton.classList.add("d-none");}
+function getNeighborText(trs,x,y,direction){let text=trs[x].children[y].textContent;if(direction==1){if(meiro[x-1][y]!=0){text+=trs[x-1].children[y].textContent;}}else if(direction==2){if(meiro[x+1][y]!=0){text+=trs[x+1].children[y].textContent;}}else if(direction==3){if(meiro[x][y-1]!=0){text+=trs[x].children[y-1].textContent;}}else{if(meiro[x][y+1]!=0){text+=trs[x].children[y+1].textContent;}}
 return text;}
-function setNeighborText(trs,x,y,direction,text,isAnswer){if(!isAnswer){trs[x].children[y].innerText=text[0];}
-if(direction==1){trs[x-1].children[y].innerText=text[1];}else if(direction==2){trs[x+1].children[y].innerText=text[1];}else if(direction==3){trs[x].children[y-1].innerText=text[1];}else{trs[x].children[y+1].innerText=text[1];}}
+function setNeighborText(trs,x,y,direction,text,isAnswer){if(!isAnswer){trs[x].children[y].textContent=text[0];}
+if(direction==1){trs[x-1].children[y].textContent=text[1];}else if(direction==2){trs[x+1].children[y].textContent=text[1];}else if(direction==3){trs[x].children[y-1].textContent=text[1];}else{trs[x].children[y+1].textContent=text[1];}}
 function generateRandomText(text,isAnswer){if(isAnswer){const first=text[0];for(let i=0;i<5;i++){text=first+words[getRandomInt(0,words.length)];if(!includeIdiom(text))return text;}}else{for(let i=0;i<5;i++){for(let j=0;j<2;j++){text[j]=words[getRandomInt(0,words.length)];}
 if(!includeIdiom(text))return text;}}
 return text;}
@@ -25,7 +25,7 @@ if(x+1<size){strictNeighbor(trs,x,y,2,false);}
 if(0<=y-1){strictNeighbor(trs,x,y,3,false);}
 if(y+1<size){strictNeighbor(trs,x,y,4,false);}}else{const routes=getNeighborRoutes(x,y);for(let j=0;j<routes.length;j++){strictNeighbor(trs,x,y,routes[j][2],true);}}}}}
 function startGame(){while(solvedPanel.firstChild){solvedPanel.removeChild(solvedPanel.firstChild);}
-generateGame();strictSolution();const startButton=document.getElementById("startButton");startButton.classList.add("d-none");startButton.innerText="やり直し";const answerButton=document.getElementById("answerButton");answerButton.classList.remove("d-none");prevPos=1;}
+generateGame();strictSolution();const startButton=document.getElementById("startButton");startButton.classList.add("d-none");const answerButton=document.getElementById("answerButton");answerButton.classList.remove("d-none");prevPos=1;}
 function isPassableRoute(x,y,routes){if(routes.length==4){return true;}else if(routes.length==3){if(x==0||x==size-1||y==0||y==size-1){return true;}}
 return false;}
 function isPassableNeighbor(x,y,routes){if(routes.length>=3){return true;}else if(routes.length==2){if(x==0||x==size-1||y==0||y==size-1){return true;}}
@@ -62,7 +62,7 @@ idiomsNum=i;}
 checkIdiomEnds();const idiomStr=idioms.slice(0,idiomsNum).join("");const meiroNode=document.getElementById("meiro");while(meiroNode.firstChild)meiroNode.removeChild(meiroNode.firstChild);for(let x=0;x<size;x++){const tr=document.createElement("tr");meiroNode.appendChild(tr);for(let y=0;y<size;y++){const td=document.createElement("td");const currPos=meiro[x][y];if(currPos==0){td.textContent=words[getRandomInt(0,words.length)];}else{if(currPos==1){td.classList.add("table-secondary");}
 td.textContent=idiomStr[currPos-1];}
 tr.appendChild(td);td.onclick=function(){meiroClickEvent(this,currPos);};}}}
-function meiroClickEvent(obj,currPos){obj.classList.toggle("table-primary");if(obj.classList.contains("table-primary")){if(prevPos==currPos){playAudio(errorAudio);}else if(currPos-prevPos==1&&currPos!=0){prevPos+=1;playAudio(correctAudio);obj.onclick=function(){};const pos=idiomEnds.findIndex((x)=>x==currPos);if(pos>=0){if(isCorrect){score+=idioms[pos].length;document.getElementById("score").innerText=score;}
+function meiroClickEvent(obj,currPos){obj.classList.toggle("table-primary");if(obj.classList.contains("table-primary")){if(prevPos==currPos){playAudio(errorAudio);}else if(currPos-prevPos==1&&currPos!=0){prevPos+=1;playAudio(correctAudio);obj.onclick=function(){};const pos=idiomEnds.findIndex((x)=>x==currPos);if(pos>=0){if(isCorrect){score+=idioms[pos].length;document.getElementById("score").textContent=score;}
 prependIdiomLink(idioms[pos],isCorrect);isCorrect=true;}}else{obj.classList.toggle("table-primary");playAudio(incorrectAudio);isCorrect=false;}}}
 function resizeFontSize(node){function getTextWidth(text,font){const context=tmpCanvas.getContext("2d");context.font=font;const metrics=context.measureText(text);return metrics.width;}
 function getTextRect(text,fontSize,font,lineHeight){const lines=text.split("\n");let maxWidth=0;const fontConfig=fontSize+"px "+font;for(let i=0;i<lines.length;i++){const width=getTextWidth(lines[i],fontConfig);if(maxWidth<width){maxWidth=width;}}
