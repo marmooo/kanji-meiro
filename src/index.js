@@ -620,21 +620,21 @@ function fetchProblems(level) {
   ignores = [];
   for (const url of idiomUrls) {
     const promise = new Promise((resolve) => {
-      fetch(url + level + ".lst").then((response) => response.text()).then(
-        (text) => {
+      fetch(url + level + ".lst")
+        .then((response) => response.text())
+        .then((text) => {
           resolve({ type: "idiom", content: text.trim().split("\n") });
-        },
-      );
+        });
     });
     promises.push(promise);
   }
   for (const url of ignoredUrls) {
     const promise = new Promise((resolve) => {
-      fetch(url + level + ".lst").then((response) => response.text()).then(
-        (text) => {
+      fetch(url + level + ".lst")
+        .then((response) => response.text())
+        .then((text) => {
           resolve({ type: "ignored", content: text.trim().split("\n") });
-        },
-      );
+        });
     });
     promises.push(promise);
   }
