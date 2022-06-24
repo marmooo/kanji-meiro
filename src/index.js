@@ -128,7 +128,11 @@ function shuffle(array) {
 function prependIdiomLink(idiom, correct) {
   const a = document.createElement("a");
   a.textContent = idiom;
-  a.href = "https://www.google.com/search?q=" + idiom + "とは";
+  if (document.documentElement.lang.startsWith("zh")) {
+    a.href = "https://www.bing.com/search?q=" + idiom;
+  } else {
+    a.href = "https://www.google.com/search?q=" + idiom + "とは";
+  }
   a.target = "_blank";
   a.rel = "noopener noreferer";
   if (correct) {
