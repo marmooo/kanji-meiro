@@ -48,7 +48,7 @@
         <div class="container flex-wrap">
           <a class="navbar-brand" href="/kanji-meiro/">
             <img alt="漢字迷路" src="/kanji-meiro/favicon/favicon.svg" width="32" height="32">
-            <ruby>漢字<rp>(</rp><rt>かんじ</rt><rp>)</rp></ruby><ruby>迷路<rp>(</rp><rt>めいろ</rt><rp>)</rp></ruby>
+            漢字迷路
           </a>
           <div class="navbar-nav">
             <select id="courseOption" class="form-select form-select-sm" aria-label="コース">
@@ -81,7 +81,7 @@
         <button id="answerButton" class="btn btn-lg btn-primary d-none">答えを見る</button>
       </div>
       <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-8 notranslate">
           <div id="masu">
             <table id="table" class="mt-3 table table-striped table-bordered align-middle">
               <tbody id="meiro"></tbody>
@@ -90,14 +90,12 @@
         </div>
         <div class="col-md-4">
           <div class="alert alert-info text-center mt-3">
-            <span class="h3">スコア: </span><span class="h3" id="score">0</span>
+            <span class="h3">スコア: </span>
+            <span class="h3 notranslate" id="score">0</span>
           </div>
           <div class="card">
-            <div class="card-header pt-4">
-              <ruby>熟語<rp>(</rp><rt>じゅくご</rt><rp>)</rp></ruby>
-              <ruby>一覧<rp>(</rp><rt>いちらん</rt><rp>)</rp></ruby>
-            </div>
-            <div id="solvedPanel" class="card-body px-1 py-2">
+            <div class="card-header pt-4">熟語一覧</div>
+            <div id="solvedPanel" class="card-body px-1 py-2 notranslate">
               <button class="btn btn-light">クリアできたもの</button>
               <button class="btn btn-secondary">できなかったもの</button>
             </div>
