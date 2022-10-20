@@ -489,6 +489,7 @@ function generateGame() {
     meiroNode.appendChild(tr);
     for (let y = 0; y < size; y++) {
       const td = document.createElement("td");
+      td.setAttribute("role", "button");
       const currPos = meiro[x][y];
       if (currPos == 0) {
         td.textContent = words[getRandomInt(0, words.length)];
