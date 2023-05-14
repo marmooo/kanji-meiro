@@ -53,10 +53,11 @@ let ignores = [];
 let words = w4;
 let level = 4;
 let course = 2;
-let errorAudio, correctAudio, incorrectAudio;
-loadAudios();
-const AudioContext = window.AudioContext || window.webkitAudioContext;
 const audioContext = new AudioContext();
+const audioBufferCache = {};
+loadAudio("error", "/kanji-meiro/mp3/cat.mp3");
+loadAudio("correct", "/kanji-meiro/mp3/correct3.mp3");
+loadAudio("incorrect", "/kanji-meiro/mp3/incorrect1.mp3");
 loadConfig();
 
 function loadConfig() {
@@ -65,50 +66,33 @@ function loadConfig() {
   }
 }
 
-function playAudio(audioBuffer, volume) {
-  const audioSource = audioContext.createBufferSource();
-  audioSource.buffer = audioBuffer;
+async function playAudio(name, volume) {
+  const audioBuffer = await loadAudio(name, audioBufferCache[name]);
+  const sourceNode = audioContext.createBufferSource();
+  sourceNode.buffer = audioBuffer;
   if (volume) {
     const gainNode = audioContext.createGain();
     gainNode.gain.value = volume;
     gainNode.connect(audioContext.destination);
-    audioSource.connect(gainNode);
-    audioSource.start();
+    sourceNode.connect(gainNode);
+    sourceNode.start();
   } else {
-    audioSource.connect(audioContext.destination);
-    audioSource.start();
+    sourceNode.connect(audioContext.destination);
+    sourceNode.start();
   }
+}
+
+async function loadAudio(name, url) {
+  if (audioBufferCache[name]) return audioBufferCache[name];
+  const response = await fetch(url);
+  const arrayBuffer = await response.arrayBuffer();
+  const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+  audioBufferCache[name] = audioBuffer;
+  return audioBuffer;
 }
 
 function unlockAudio() {
   audioContext.resume();
-}
-
-function loadAudio(url) {
-  return fetch(url)
-    .then((response) => response.arrayBuffer())
-    .then((arrayBuffer) => {
-      return new Promise((resolve, reject) => {
-        audioContext.decodeAudioData(arrayBuffer, (audioBuffer) => {
-          resolve(audioBuffer);
-        }, (err) => {
-          reject(err);
-        });
-      });
-    });
-}
-
-function loadAudios() {
-  promises = [
-    loadAudio("/kanji-meiro/mp3/cat.mp3"),
-    loadAudio("/kanji-meiro/mp3/correct3.mp3"),
-    loadAudio("/kanji-meiro/mp3/incorrect1.mp3"),
-  ];
-  Promise.all(promises).then((audioBuffers) => {
-    errorAudio = audioBuffers[0];
-    correctAudio = audioBuffers[1];
-    incorrectAudio = audioBuffers[2];
-  });
 }
 
 function getRandomInt(min, max) {
@@ -512,10 +496,10 @@ function meiroClickEvent(obj, currPos) {
   obj.classList.toggle("table-primary");
   if (obj.classList.contains("table-primary")) {
     if (prevPos == currPos) {
-      playAudio(errorAudio);
+      playAudio("error");
     } else if (currPos - prevPos == 1 && currPos != 0) { // 正解
       prevPos += 1;
-      playAudio(correctAudio);
+      playAudio("correct");
       obj.onclick = function () {};
       const pos = idiomEnds.findIndex((x) => x == currPos);
       if (pos >= 0) {
@@ -528,7 +512,7 @@ function meiroClickEvent(obj, currPos) {
       }
     } else {
       obj.classList.toggle("table-primary");
-      playAudio(incorrectAudio);
+      playAudio("incorrect");
       isCorrect = false;
     }
   }
