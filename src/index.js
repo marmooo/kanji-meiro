@@ -55,9 +55,9 @@ let level = 4;
 let course = 2;
 const audioContext = new AudioContext();
 const audioBufferCache = {};
-loadAudio("error", "/kanji-meiro/mp3/cat.mp3");
-loadAudio("correct", "/kanji-meiro/mp3/correct3.mp3");
-loadAudio("incorrect", "/kanji-meiro/mp3/incorrect1.mp3");
+loadAudio("error", "mp3/cat.mp3");
+loadAudio("correct", "mp3/correct3.mp3");
+loadAudio("incorrect", "mp3/incorrect1.mp3");
 loadConfig();
 
 function loadConfig() {
@@ -485,8 +485,8 @@ function generateGame() {
         td.textContent = idiomStr[currPos - 1];
       }
       tr.appendChild(td);
-      td.onclick = function () {
-        meiroClickEvent(this, currPos);
+      td.onclick = (event) => {
+        meiroClickEvent(event.target, currPos);
       };
     }
   }
@@ -500,7 +500,7 @@ function meiroClickEvent(obj, currPos) {
     } else if (currPos - prevPos == 1 && currPos != 0) { // 正解
       prevPos += 1;
       playAudio("correct");
-      obj.onclick = function () {};
+      obj.onclick = () => {};
       const pos = idiomEnds.findIndex((x) => x == currPos);
       if (pos >= 0) {
         if (isCorrect) {
@@ -599,7 +599,7 @@ function loadIdiomsAndIgnores(data) {
 
 const meiroObj = document.getElementById("meiro");
 resizeFontSize(meiroObj);
-window.addEventListener("resize", function () {
+window.addEventListener("resize", () => {
   resizeFontSize(meiroObj);
 });
 Promise.all(fetchProblems(level)).then((data) => {
@@ -615,16 +615,16 @@ Promise.all(fetchProblems(level)).then((data) => {
 document.getElementById("toggleDarkMode").onclick = toggleDarkMode;
 document.getElementById("startButton").onclick = startGame;
 document.getElementById("answerButton").onclick = showAnswer;
-document.getElementById("levelOption").addEventListener("change", function () {
-  level = this.selectedIndex + 1;
+document.getElementById("levelOption").addEventListener("change", (event) => {
+  level = event.target.selectedIndex + 1;
   words = wordsList[level];
   Promise.all(fetchProblems(level)).then((data) => {
     loadIdiomsAndIgnores(data);
     startGame();
   });
 });
-document.getElementById("courseOption").addEventListener("change", function () {
-  course = this.selectedIndex;
+document.getElementById("courseOption").addEventListener("change", (event) => {
+  course = event.target.selectedIndex;
   Promise.all(fetchProblems(level)).then((data) => {
     loadIdiomsAndIgnores(data);
     startGame();
