@@ -5,7 +5,7 @@ async function build(threshold) {
   Deno.mkdirSync("src/data/idiom/3", { recursive: true });
   Deno.mkdirSync("src/data/ignored/2", { recursive: true });
   Deno.mkdirSync("src/data/ignored/3", { recursive: true });
-  for (let i = 1; i <= 10; i++) {
+  for (let i = 1; i <= 12; i++) {
     const idiom2 = [];
     const idiom3 = [];
     const ignored2 = [];
@@ -17,22 +17,33 @@ async function build(threshold) {
       const arr = line.split(",");
       const word = arr[0];
       const count = parseInt(arr[1]);
-      if (count >= threshold) {
+      if (i <= 9) {
+        if (count >= threshold) {
+          switch (word.length) {
+            case 2:
+              idiom2.push(word);
+              break;
+            case 3:
+              idiom3.push(word);
+              break;
+          }
+        } else {
+          switch (word.length) {
+            case 2:
+              ignored2.push(word);
+              break;
+            case 3:
+              ignored3.push(word);
+              break;
+          }
+        }
+      } else {
         switch (word.length) {
           case 2:
             idiom2.push(word);
             break;
           case 3:
             idiom3.push(word);
-            break;
-        }
-      } else {
-        switch (word.length) {
-          case 2:
-            ignored2.push(word);
-            break;
-          case 3:
-            ignored3.push(word);
             break;
         }
       }
