@@ -1,4 +1,4 @@
-import { JKAT } from "https://cdn.jsdelivr.net/npm/@marmooo/kanji@0.0.2/esm/jkat.js";
+import { JKAT } from "https://cdn.jsdelivr.net/npm/@marmooo/kanji@0.0.4/esm/jkat.js";
 
 const remSize = parseInt(getComputedStyle(document.documentElement).fontSize);
 // 何でも繋がってしまう漢字は意図的に削除 (一二三四五六七八九十百千上下左右)
