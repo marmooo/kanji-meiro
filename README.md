@@ -5,7 +5,7 @@
 ## Installation
 
 install [marmooo/graded-idioms-ja](https://github.com/marmooo/graded-idioms-ja)
-licensed under the CC-BY 4.0
+licensed under the CC-BY-4.0
 
 ## Build
 
