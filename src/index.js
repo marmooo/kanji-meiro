@@ -525,32 +525,20 @@ function getProblemUrls(course) {
   }
 }
 
-function fetchProblems(level) {
-  const promises = [];
+async function fetchProblems(level) {
   const [idiomUrls, ignoredUrls] = getProblemUrls(course);
-  idioms = [];
-  ignores = [];
-  for (const url of idiomUrls) {
-    const promise = new Promise((resolve) => {
-      fetch(url + level + ".lst")
-        .then((response) => response.text())
-        .then((text) => {
-          resolve({ type: "idiom", content: text.trim().split("\n") });
-        });
-    });
-    promises.push(promise);
-  }
-  for (const url of ignoredUrls) {
-    const promise = new Promise((resolve) => {
-      fetch(url + level + ".lst")
-        .then((response) => response.text())
-        .then((text) => {
-          resolve({ type: "ignored", content: text.trim().split("\n") });
-        });
-    });
-    promises.push(promise);
-  }
-  return promises;
+  const fetchList = (urls, type) => {
+    return Promise.all(
+      urls.map(async (url) => {
+        const res = await fetch(url + level + ".lst");
+        const text = await res.text();
+        return { type, content: text.trim().split("\n") };
+      }),
+    );
+  };
+  const idioms = await fetchList(idiomUrls, "idiom");
+  const ignores = await fetchList(ignoredUrls, "ignored");
+  return [...idioms, ...ignores];
 }
 
 function loadIdiomsAndIgnores(data) {
@@ -570,7 +558,7 @@ resizeFontSize(meiroObj);
 globalThis.addEventListener("resize", () => {
   resizeFontSize(meiroObj);
 });
-Promise.all(fetchProblems(level)).then((data) => {
+fetchProblems(level).then((data) => {
   loadIdiomsAndIgnores(data);
   generateGame();
   strictSolution();
@@ -586,14 +574,14 @@ document.getElementById("answerButton").onclick = showAnswer;
 document.getElementById("levelOption").addEventListener("change", (event) => {
   level = event.target.selectedIndex;
   words = wordsList[level];
-  Promise.all(fetchProblems(level + 1)).then((data) => {
+  fetchProblems(level + 1).then((data) => {
     loadIdiomsAndIgnores(data);
     startGame();
   });
 });
 document.getElementById("courseOption").addEventListener("change", (event) => {
   course = event.target.selectedIndex;
-  Promise.all(fetchProblems(level + 1)).then((data) => {
+  fetchProblems(level + 1).then((data) => {
     loadIdiomsAndIgnores(data);
     startGame();
   });
