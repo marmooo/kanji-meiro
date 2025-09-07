@@ -1,4 +1,5 @@
 import { JKAT } from "https://cdn.jsdelivr.net/npm/@marmooo/kanji@0.1.1/esm/jkat.js";
+import { createWorker } from "https://cdn.jsdelivr.net/npm/emoji-particle@0.0.3/+esm";
 
 const remSize = parseInt(getComputedStyle(document.documentElement).fontSize);
 // 何でも繋がってしまう漢字は意図的に削除 (一二三四五六七八九十百千上下左右)
@@ -8,7 +9,9 @@ const words1 = Array.from(
 const wordsList = [words1, ...JKAT.slice(1)];
 const size = 10;
 const meiro = new Array(12);
+const emojiParticle = initEmojiParticle();
 let score = 0;
+let consecutiveWins = 0;
 let counter = 0;
 let prevPos = 1;
 let idiomEnds = [];
@@ -90,6 +93,30 @@ function playAudio(name, volume) {
   gainNode.connect(audioContext.destination);
   sourceNode.connect(gainNode);
   sourceNode.start();
+}
+
+function initEmojiParticle() {
+  const canvas = document.createElement("canvas");
+  Object.assign(canvas.style, {
+    position: "fixed",
+    pointerEvents: "none",
+    top: "0px",
+    left: "0px",
+  });
+  canvas.width = document.documentElement.clientWidth;
+  canvas.height = document.documentElement.clientHeight;
+  document.body.prepend(canvas);
+
+  const offscreen = canvas.transferControlToOffscreen();
+  const worker = createWorker();
+  worker.postMessage({ type: "init", canvas: offscreen }, [offscreen]);
+
+  globalThis.addEventListener("resize", () => {
+    const width = document.documentElement.clientWidth;
+    const height = document.documentElement.clientHeight;
+    worker.postMessage({ type: "resize", width, height });
+  });
+  return { canvas, offscreen, worker };
 }
 
 function getRandomInt(min, max) {
@@ -482,8 +509,21 @@ function meiroClickEvent(obj, currPos) {
       const pos = idiomEnds.findIndex((x) => x == currPos);
       if (pos >= 0) {
         if (isCorrect) {
+          consecutiveWins += 1;
           score += idioms[pos].length;
           document.getElementById("score").textContent = score;
+        } else {
+          consecutiveWins = 1;
+        }
+        for (let i = 0; i < consecutiveWins; i++) {
+          emojiParticle.worker.postMessage({
+            type: "spawn",
+            options: {
+              particleType: "popcorn",
+              originX: Math.random() * emojiParticle.canvas.width,
+              originY: Math.random() * emojiParticle.canvas.height,
+            },
+          });
         }
         prependIdiomLink(idioms[pos], isCorrect);
         isCorrect = true;
