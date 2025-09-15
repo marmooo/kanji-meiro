@@ -1,4 +1,4 @@
-import { JKAT } from "https://cdn.jsdelivr.net/npm/@marmooo/kanji@0.1.1/esm/jkat.js";
+import { JKAT } from "https://cdn.jsdelivr.net/npm/@marmooo/kanji@0.1.2/esm/jkat.js";
 import { createWorker } from "https://cdn.jsdelivr.net/npm/emoji-particle@0.0.4/+esm";
 
 const remSize = parseInt(getComputedStyle(document.documentElement).fontSize);
