@@ -95,6 +95,20 @@ function playAudio(name, volume) {
   sourceNode.start();
 }
 
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min)) + min;
+}
+
+function shuffle(array) {
+  for (let i = array.length; 1 < i; i--) {
+    const k = Math.floor(Math.random() * i);
+    [array[k], array[i - 1]] = [array[i - 1], array[k]];
+  }
+  return array;
+}
+
 function initEmojiParticle() {
   const canvas = document.createElement("canvas");
   Object.assign(canvas.style, {
@@ -119,19 +133,6 @@ function initEmojiParticle() {
   return { canvas, offscreen, worker };
 }
 
-function getRandomInt(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min)) + min;
-}
-
-function shuffle(array) {
-  for (let i = array.length; 1 < i; i--) {
-    const k = Math.floor(Math.random() * i);
-    [array[k], array[i - 1]] = [array[i - 1], array[k]];
-  }
-  return array;
-}
 
 function prependIdiomLink(idiom, correct) {
   const a = document.createElement("a");
@@ -498,6 +499,7 @@ function generateGame() {
 }
 
 function meiroClickEvent(obj, currPos) {
+  let currScore = 0;
   obj.classList.toggle("table-primary");
   if (obj.classList.contains("table-primary")) {
     if (prevPos == currPos) {
@@ -510,8 +512,7 @@ function meiroClickEvent(obj, currPos) {
       if (pos >= 0) {
         if (isCorrect) {
           consecutiveWins += 1;
-          score += idioms[pos].length;
-          document.getElementById("score").textContent = score;
+          currScore += idioms[pos].length;
         } else {
           consecutiveWins = 1;
         }
@@ -534,6 +535,8 @@ function meiroClickEvent(obj, currPos) {
       isCorrect = false;
     }
   }
+  score += currScore;
+  document.getElementById("score").textContent = score;
 }
 
 function resizeFontSize(node) {
